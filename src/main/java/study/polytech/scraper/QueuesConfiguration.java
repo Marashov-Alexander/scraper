@@ -8,12 +8,12 @@ public class QueuesConfiguration {
 
     @Bean
     public ConfigurableQueue<String> urlsQueue() {
-        return new ConfigurableQueue<>();
+        return new ConfigurableQueue<>("urlsQueue");
     }
 
     @Bean
     public ConfigurableQueue<ScrapResult> openedPagesQueue() {
-        return new ConfigurableQueue<>();
+        return new ConfigurableQueue<>("openedPagesQueue");
     }
 
 }

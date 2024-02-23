@@ -1,5 +1,7 @@
 package study.polytech.scraper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -10,18 +12,22 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigurableQueue<T> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurableQueue.class);
+
     private static final int DEFAULT_QUEUE_CAPACITY = 16;
     private static final long DEFAULT_PUSH_TIMEOUT_MILLIS = 100L;
     private static final long DEFAULT_POP_TIMEOUT_MILLIS = 1000L;
 
+    private final String queueName;
     private final long pushTimeoutMillis;
     private final BlockingQueue<T> queue;
 
-    public ConfigurableQueue() {
-        this(DEFAULT_QUEUE_CAPACITY, DEFAULT_PUSH_TIMEOUT_MILLIS);
+    public ConfigurableQueue(@NonNull String queueName) {
+        this(queueName, DEFAULT_QUEUE_CAPACITY, DEFAULT_PUSH_TIMEOUT_MILLIS);
     }
 
-    public ConfigurableQueue(int queueCapacity, long pushTimeoutMillis) {
+    public ConfigurableQueue(@NonNull String queueName, int queueCapacity, long pushTimeoutMillis) {
+        this.queueName = queueName;
         this.pushTimeoutMillis = pushTimeoutMillis;
         this.queue = new ArrayBlockingQueue<>(queueCapacity);
     }
@@ -30,16 +36,31 @@ public class ConfigurableQueue<T> {
         Objects.requireNonNull(element);
         try {
             if (queue.offer(element, pushTimeoutMillis, TimeUnit.MILLISECONDS)) {
+                LOGGER.info("Element [{}] added to queue [{}]", element, queueName);
                 return;
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("Offer element [{}] operation interrupted for queue [{}]", element, queueName, e);
         }
-        throw new QueueIsFullException();
+        QueueIsFullException exception = new QueueIsFullException();
+        LOGGER.error("Unable to add element [{}] to queue [{}]", element, queueName, exception);
+        throw exception;
     }
 
     @Nullable
     public T pop() throws InterruptedException {
-        return queue.poll(DEFAULT_POP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        long start = System.currentTimeMillis();
+        T element = queue.poll(DEFAULT_POP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        if (element == null) {
+            LOGGER.debug("No elements in queue [{}], took [{}] ms", queueName, System.currentTimeMillis() - start);
+        } else {
+            LOGGER.info("Element [{}] removed from queue [{}], took [{}] ms", element, queueName, System.currentTimeMillis() - start);
+        }
+        return element;
+    }
+
+    @NonNull
+    public String getQueueName() {
+        return queueName;
     }
 }

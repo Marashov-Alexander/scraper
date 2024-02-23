@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
 
     private final OutputResultsHandler outputResultsHandler;
+
     public ScrapResultsConsumer(@NonNull ConfigurableQueue<ScrapResult> openedPagesQueue,
                                 @NonNull OutputResultsHandler outputResultsHandler) {
         super(openedPagesQueue);
@@ -15,7 +16,6 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
 
     @Override
     protected void process(@NonNull ScrapResult scrapResult) {
-        String result = scrapResult.getResult();
-        outputResultsHandler.putResults(scrapResult.getUrl(), result);
+        outputResultsHandler.putResults(scrapResult.getUrl(), scrapResult.getResult());
     }
 }

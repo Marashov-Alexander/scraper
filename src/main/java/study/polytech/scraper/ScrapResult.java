@@ -50,4 +50,12 @@ public class ScrapResult {
                 .append(result)
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return "ScrapResult{" +
+                "url='" + url + '\'' +
+                ", result='" + result + '\'' +
+                '}';
+    }
 }

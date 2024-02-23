@@ -25,7 +25,8 @@ public class UrlsQueueConsumer extends QueueElementsConsumer<String> {
         try {
             openedPagesQueue.push(new ScrapResult(url, result));
         } catch (QueueIsFullException e) {
-            throw new RuntimeException(e);
+            logger.error("Unable to schedule results [{}] handling for url [{}]", result, url);
+            throw new RuntimeException("Unable to schedule results handling", e);
         }
     }
 
