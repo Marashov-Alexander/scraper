@@ -20,10 +20,10 @@ public class UrlsQueueConsumer extends QueueElementsConsumer<String> {
     @Override
     public void process(@NonNull String url) {
         // acquire the proxy and other resources?
-        String result = scraper.scrap(url);
+        ScrapResult result = scraper.scrap(url);
         // release the proxy
         try {
-            openedPagesQueue.push(new ScrapResult(url, result));
+            openedPagesQueue.push(result);
         } catch (QueueIsFullException e) {
             logger.error("Unable to schedule results [{}] handling for url [{}]", result, url);
             throw new RuntimeException("Unable to schedule results handling", e);

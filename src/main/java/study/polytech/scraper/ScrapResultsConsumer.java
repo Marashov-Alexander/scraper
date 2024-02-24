@@ -16,6 +16,6 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
 
     @Override
     protected void process(@NonNull ScrapResult scrapResult) {
-        outputResultsHandler.putResults(scrapResult.getUrl(), scrapResult.getResult());
+        outputResultsHandler.putResults(scrapResult);
     }
 }
