@@ -26,6 +26,8 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 
 	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
 	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '2.41.0'

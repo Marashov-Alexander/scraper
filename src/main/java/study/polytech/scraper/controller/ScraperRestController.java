@@ -17,7 +17,7 @@ import study.polytech.scraper.UrlAnalyzerResult;
 public class ScraperRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScraperRestController.class);
-    private static final long DEFAULT_RESULT_WAITING_TIMEOUT_MILLIS = 10_000L;
+    private static final long DEFAULT_RESULT_WAITING_TIMEOUT_MILLIS = 30_000L;
 
     private final InputUrlsHandler inputUrlsHandler;
     private final OutputResultsHandler outputResultsHandler;
