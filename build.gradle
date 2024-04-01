@@ -30,7 +30,13 @@ dependencies {
 
 
 	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '2.41.0'
+	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.17.0'
+
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
+
+	// https://mvnrepository.com/artifact/org.apache.directory.studio/org.apache.commons.io
+	implementation group: 'org.apache.directory.studio', name: 'org.apache.commons.io', version: '2.4'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'

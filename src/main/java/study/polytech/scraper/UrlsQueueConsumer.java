@@ -12,7 +12,7 @@ public class UrlsQueueConsumer extends QueueElementsConsumer<String> {
     public UrlsQueueConsumer(@NonNull ConfigurableQueue<String> urlsQueue,
                              @NonNull ConfigurableQueue<ScrapResult> openedPagesQueue,
                              @NonNull Scraper scraper) {
-        super(urlsQueue);
+        super(urlsQueue, 2);
         this.openedPagesQueue = openedPagesQueue;
         this.scraper = scraper;
     }

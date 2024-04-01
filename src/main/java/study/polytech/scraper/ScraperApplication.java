@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ScraperApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+		System.setProperty("webdriver.chrome.logfile", "~/help/chromedriver.log");
+		System.setProperty("webdriver.chrome.verboseLogging", "true");
 		SpringApplication.run(ScraperApplication.class, args);
 	}
 
