@@ -33,7 +33,7 @@ public class ProxyManager {
             freeProxy = freeProxies.poll(POLL_TIMEOUT, TimeUnit.SECONDS);
             LOGGER.info("Found free proxy [{}], operation took [{}] ms", freeProxy, System.currentTimeMillis() - startTime);
             return function.apply(freeProxy);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error("An error occurred", e);
         } finally {
             if (freeProxy != null && !freeProxies.offer(freeProxy)) {
