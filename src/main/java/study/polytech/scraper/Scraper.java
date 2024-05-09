@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.chromium.ChromiumDriverLogLevel;
 import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.v118.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -122,6 +123,9 @@ public class Scraper {
         String screenshotPath = "./screenshots/" + Math.abs(url.hashCode()) + ".png";
         File screenshotFile = new File(screenshotPath);
         try {
+            if (screenshotFile.exists()) {
+                LOGGER.info("Old file [{}] removed [{}]", screenshotPath, screenshotFile.delete());
+            }
             FileUtils.moveFile(tmpScreenshotFile, screenshotFile);
             return screenshotPath;
         } catch (IOException e) {

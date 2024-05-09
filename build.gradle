@@ -37,8 +37,8 @@ dependencies {
 //	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: $seleniumVersion
 	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver
 //	implementation group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: $seleniumVersion
-	testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
-	testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+	implementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+	implementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
 
 
 
