@@ -20,24 +20,24 @@ public class ScraperService {
         this.outputResultsHandler = outputResultsHandler;
     }
 
-    public ScrapResult scrapSync(@NonNull String url) {
+    public ModerationResult scrapSync(@NonNull String url) {
         LOGGER.info("ScrapSync invoked with url [{}]", url);
         try {
             UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(url);
             LOGGER.info("Url analyzer result is [{}] for url [{}]", urlAnalyzerResult, url);
             if (!urlAnalyzerResult.shouldProcess()) {
-                return new ScrapResult(url, urlAnalyzerResult.name());
+                return new ModerationResult(url, urlAnalyzerResult.name());
             }
             long start = System.currentTimeMillis();
-            ScrapResult result = outputResultsHandler.waitForResults(url, DEFAULT_RESULT_WAITING_TIMEOUT_MILLIS);
+            ModerationResult result = outputResultsHandler.waitForResults(url, DEFAULT_RESULT_WAITING_TIMEOUT_MILLIS);
             LOGGER.info("Waiting for results operation took [{}] ms for url [{}]", System.currentTimeMillis() - start, url);
             return result;
         } catch (QueueIsFullException e) {
             LOGGER.error("Queue is full, url [{}] rejected", url, e);
-            return new ScrapResult(url, "Unable to process url. Queue is full");
+            return new ModerationResult(url, "Unable to process url. Queue is full");
         } catch (RuntimeException e) {
             LOGGER.error("An error occurred, url [{}] rejected", url, e);
-            return new ScrapResult(url, "An error occurred" + e.getMessage());
+            return new ModerationResult(url, "An error occurred" + e.getMessage());
         }
     }
 }

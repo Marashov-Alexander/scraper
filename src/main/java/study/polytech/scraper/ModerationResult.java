@@ -10,30 +10,33 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class ScrapResult implements Serializable {
+public class ModerationResult implements Serializable {
 
     private final String url;
     private final String title;
     private final Path screenshotPath;
+    private final Long screenshotHash;
     private final String errorStatus;
 
-    public ScrapResult(@NonNull String url,
-                       @NonNull String title,
-                       @Nullable Path screenshotPath) {
+    public ModerationResult(@NonNull String url,
+                            @Nullable String title,
+                            @Nullable Path screenshotPath,
+                            @Nullable Long screenshotHash) {
         Objects.requireNonNull(url);
-        Objects.requireNonNull(title);
         this.url = url;
         this.title = title;
         this.screenshotPath = screenshotPath;
+        this.screenshotHash = screenshotHash;
         this.errorStatus = null;
     }
 
-    public ScrapResult(@NonNull String url, @NonNull String errorStatus) {
+    public ModerationResult(@NonNull String url, @NonNull String errorStatus) {
         Objects.requireNonNull(url);
         Objects.requireNonNull(errorStatus);
         this.url = url;
         this.title = null;
         this.screenshotPath = null;
+        this.screenshotHash = null;
         this.errorStatus = errorStatus;
     }
 
@@ -50,6 +53,11 @@ public class ScrapResult implements Serializable {
     @Nullable
     public Path getScreenshotPath() {
         return screenshotPath;
+    }
+
+    @Nullable
+    public Long getScreenshotHash() {
+        return screenshotHash;
     }
 
     @Nullable
