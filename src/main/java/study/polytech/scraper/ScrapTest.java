@@ -1,5 +1,10 @@
 package study.polytech.scraper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,11 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ScrapTest {
@@ -37,7 +37,7 @@ public class ScrapTest {
                     int index = counter.getAndIncrement();
 
                     long startTimeNanos = System.nanoTime();
-                    ScrapResult scrapResult = scraperService.scrapSync(url);
+                    ModerationResult scrapResult = scraperService.scrapSync(url);
                     long deltaNanos = System.nanoTime() - startTimeNanos;
 
                     saveResult(bufferedWriter, scrapResult, deltaNanos, index);
@@ -50,7 +50,7 @@ public class ScrapTest {
         LOGGER.info("Scraping urls from [{}] to [{}] done", urlsOffsetIndex, urlsLimit);
     }
 
-    private void saveResult(@NonNull BufferedWriter bufferedWriter, ScrapResult scrapResult, long deltaNanos, int index) {
+    private void saveResult(@NonNull BufferedWriter bufferedWriter, ModerationResult scrapResult, long deltaNanos, int index) {
         String record = String.format(RESULT_ROW_FORMAT, index, scrapResult.getUrl(), scrapResult.getScreenshotPath(), scrapResult.getErrorStatus(), deltaNanos);
         try {
             bufferedWriter.write(record);

@@ -2,6 +2,7 @@ package study.polytech.scraper;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.Validate;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,6 +13,7 @@ import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v118.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -19,9 +21,12 @@ import study.polytech.scraper.resource.ProxyManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -30,9 +35,13 @@ public class Scraper {
     private static final Logger LOGGER = LoggerFactory.getLogger(Scraper.class);
 
     private final ProxyManager proxyManager;
+    private final String screenshotDirectory;
 
-    public Scraper(@NonNull ProxyManager proxyManager) {
+    public Scraper(@NonNull ProxyManager proxyManager,
+                   @Value("${path.screenshots.directory}") String screenshotDirectory) {
+        Objects.requireNonNull(screenshotDirectory);
         this.proxyManager = proxyManager;
+        this.screenshotDirectory = screenshotDirectory;
     }
 
     @NonNull
@@ -106,10 +115,10 @@ public class Scraper {
     }
 
     @NonNull
-    private static ScrapResult getScrapResult(@NonNull String url, @NonNull ChromeDriver driver) {
+    private ScrapResult getScrapResult(@NonNull String url, @NonNull ChromeDriver driver) {
         try {
             String title = driver.getTitle();
-            String screenshotPath = takeScreenshot(url, driver);
+            Path screenshotPath = takeScreenshot(url, driver);
             return new ScrapResult(url, title, screenshotPath);
         } catch (RuntimeException e) {
             LOGGER.error("Failed to get scrap results for url [{}]", url, e);
@@ -118,16 +127,20 @@ public class Scraper {
     }
 
     @Nullable
-    private static String takeScreenshot(@NonNull String url, @NonNull ChromeDriver driver) {
+    private Path takeScreenshot(@NonNull String url, @NonNull ChromeDriver driver) {
+        long startTime = System.currentTimeMillis();
         File tmpScreenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        String screenshotPath = "./screenshots/" + Math.abs(url.hashCode()) + ".png";
+        int urlHash = Math.abs(url.hashCode());
+        String screenshotPath = screenshotDirectory + urlHash + ".png";
         File screenshotFile = new File(screenshotPath);
         try {
             if (screenshotFile.exists()) {
                 LOGGER.info("Old file [{}] removed [{}]", screenshotPath, screenshotFile.delete());
             }
             FileUtils.moveFile(tmpScreenshotFile, screenshotFile);
-            return screenshotPath;
+            long delta = startTime - System.currentTimeMillis();
+            LOGGER.info("Got screenshot [{}] for url [{}] for [{}] ms", screenshotFile, url, delta);
+            return screenshotFile.toPath();
         } catch (IOException e) {
             LOGGER.error("Error taking screenshot for url [{}]", url, e);
             return null;

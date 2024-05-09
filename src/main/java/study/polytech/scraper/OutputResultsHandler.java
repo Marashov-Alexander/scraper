@@ -17,7 +17,7 @@ public class OutputResultsHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OutputResultsHandler.class);
 
-    private final Map<String, ScrapResult> urlToResult;
+    private final Map<String, ModerationResult> urlToResult;
     private final ReentrantLock lock;
     private final Condition condition;
 
@@ -27,11 +27,11 @@ public class OutputResultsHandler {
         this.condition = lock.newCondition();
     }
 
-    public void putResults(@NonNull ScrapResult scrapResult) {
+    public void putResults(@NonNull ModerationResult ModerationResult) {
         lock.lock();
         try {
-            LOGGER.info("New results available [{}]", scrapResult);
-            urlToResult.put(scrapResult.getUrl(), scrapResult);
+            LOGGER.info("New results available [{}]", ModerationResult);
+            urlToResult.put(ModerationResult.getUrl(), ModerationResult);
             condition.signalAll();
         } finally {
             lock.unlock();
@@ -39,7 +39,7 @@ public class OutputResultsHandler {
     }
 
     @Nullable
-    public ScrapResult waitForResults(@NonNull String url, long timeoutMillis) {
+    public ModerationResult waitForResults(@NonNull String url, long timeoutMillis) {
         lock.lock();
         try {
             return awaitResults(url, timeoutMillis);
@@ -53,10 +53,10 @@ public class OutputResultsHandler {
     }
 
     @Nullable
-    private ScrapResult awaitResults(@NonNull String url, long timeoutMillis) throws InterruptedException {
+    private ModerationResult awaitResults(@NonNull String url, long timeoutMillis) throws InterruptedException {
         long start = System.currentTimeMillis();
         long nanosRemaining = TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
-        ScrapResult result;
+        ModerationResult result;
         while ((result = urlToResult.get(url)) == null) {
             if (nanosRemaining <= 0L) {
                 LOGGER.error("Waiting for results for url [{}] timed out", url);
