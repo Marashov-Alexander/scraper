@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

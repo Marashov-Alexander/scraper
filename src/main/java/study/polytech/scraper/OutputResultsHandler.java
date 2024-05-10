@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import study.polytech.scraper.analyzer.ModerationResult;
 
 import java.util.HashMap;
 import java.util.Map;

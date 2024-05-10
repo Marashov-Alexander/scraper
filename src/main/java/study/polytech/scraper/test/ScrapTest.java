@@ -1,9 +1,12 @@
-package study.polytech.scraper;
+package study.polytech.scraper.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import study.polytech.scraper.ScrapRequest;
+import study.polytech.scraper.analyzer.ModerationResult;
+import study.polytech.scraper.ScraperService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -37,7 +40,7 @@ public class ScrapTest {
                     int index = counter.getAndIncrement();
 
                     long startTimeNanos = System.nanoTime();
-                    ModerationResult scrapResult = scraperService.scrapSync(url);
+                    ModerationResult scrapResult = scraperService.scrapSync(new ScrapRequest(url, null, null));
                     long deltaNanos = System.nanoTime() - startTimeNanos;
 
                     saveResult(bufferedWriter, scrapResult, deltaNanos, index);

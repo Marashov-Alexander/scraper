@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.queue;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

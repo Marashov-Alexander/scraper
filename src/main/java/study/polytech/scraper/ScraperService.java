@@ -4,6 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import study.polytech.scraper.analyzer.ModerationResult;
+import study.polytech.scraper.filter.UrlAnalyzerResult;
+import study.polytech.scraper.queue.QueueIsFullException;
+
+import java.util.Objects;
 
 @Service
 public class ScraperService {
@@ -20,11 +25,13 @@ public class ScraperService {
         this.outputResultsHandler = outputResultsHandler;
     }
 
-    public ModerationResult scrapSync(@NonNull String url) {
-        LOGGER.info("ScrapSync invoked with url [{}]", url);
+    public ModerationResult scrapSync(@NonNull ScrapRequest request) {
+        Objects.requireNonNull(request);
+        LOGGER.info("ScrapSync invoked with request [{}]", request);
         try {
-            UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(url);
-            LOGGER.info("Url analyzer result is [{}] for url [{}]", urlAnalyzerResult, url);
+            UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(request);
+            LOGGER.info("Url analyzer result is [{}] for request [{}]", urlAnalyzerResult, request);
+            String url = request.getUrl();
             if (!urlAnalyzerResult.shouldProcess()) {
                 return new ModerationResult(url, urlAnalyzerResult.name());
             }
@@ -33,11 +40,11 @@ public class ScraperService {
             LOGGER.info("Waiting for results operation took [{}] ms for url [{}]", System.currentTimeMillis() - start, url);
             return result;
         } catch (QueueIsFullException e) {
-            LOGGER.error("Queue is full, url [{}] rejected", url, e);
-            return new ModerationResult(url, "Unable to process url. Queue is full");
+            LOGGER.error("Queue is full, request [{}] rejected", request, e);
+            return new ModerationResult(request.getUrl(), "Unable to process url. Queue is full");
         } catch (RuntimeException e) {
-            LOGGER.error("An error occurred, url [{}] rejected", url, e);
-            return new ModerationResult(url, "An error occurred" + e.getMessage());
+            LOGGER.error("An error occurred, url [{}] rejected", request, e);
+            return new ModerationResult(request.getUrl(), "An error occurred" + e.getMessage());
         }
     }
 }

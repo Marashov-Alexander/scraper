@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.analyzer;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

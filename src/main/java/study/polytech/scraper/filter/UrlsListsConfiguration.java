@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.filter;
 
 import com.google.common.collect.Sets;
 import org.springframework.context.annotation.Bean;

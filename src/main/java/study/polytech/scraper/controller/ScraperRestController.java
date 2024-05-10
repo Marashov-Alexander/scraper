@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import study.polytech.scraper.ModerationResult;
-import study.polytech.scraper.ScrapResult;
+import study.polytech.scraper.ScrapRequest;
+import study.polytech.scraper.analyzer.ModerationResult;
 import study.polytech.scraper.ScraperService;
 
 @RestController("/")
@@ -20,7 +20,10 @@ public class ScraperRestController {
 
     @RequestMapping(path = "/scrap/sync", method = RequestMethod.GET)
     // TODO: change to POST with RequestBody param
-    public ModerationResult scrapSync(@RequestParam String url) {
-        return scraperService.scrapSync(url);
+    public ModerationResult scrapSync(@RequestParam(required = true) String url,
+                                      @RequestParam(required = false) Boolean disableMedia,
+                                      @RequestParam(required = false) Boolean emulateDevice) {
+        ScrapRequest request = new ScrapRequest(url, disableMedia, emulateDevice);
+        return scraperService.scrapSync(request);
     }
 }
