@@ -23,7 +23,6 @@ public class ScraperRestController {
     public ModerationResult scrapSync(@RequestParam(required = true) String url,
                                       @RequestParam(required = false) Boolean disableMedia,
                                       @RequestParam(required = false) Boolean emulateDevice) {
-        ScrapRequest request = new ScrapRequest(url, disableMedia, emulateDevice);
-        return scraperService.scrapSync(request);
+        return scraperService.scrapSync(url, disableMedia, emulateDevice);
     }
 }

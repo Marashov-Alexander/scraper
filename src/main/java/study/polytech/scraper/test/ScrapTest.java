@@ -40,7 +40,7 @@ public class ScrapTest {
                     int index = counter.getAndIncrement();
 
                     long startTimeNanos = System.nanoTime();
-                    ModerationResult scrapResult = scraperService.scrapSync(new ScrapRequest(url, null, null));
+                    ModerationResult scrapResult = scraperService.scrapSync(url, null, null);
                     long deltaNanos = System.nanoTime() - startTimeNanos;
 
                     saveResult(bufferedWriter, scrapResult, deltaNanos, index);

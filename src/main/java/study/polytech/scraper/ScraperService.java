@@ -3,9 +3,12 @@ package study.polytech.scraper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import study.polytech.scraper.analyzer.ModerationResult;
 import study.polytech.scraper.filter.UrlAnalyzerResult;
+import study.polytech.scraper.profile.ProfileManager;
+import study.polytech.scraper.profile.ScraperProfile;
 import study.polytech.scraper.queue.QueueIsFullException;
 
 import java.util.Objects;
@@ -18,20 +21,26 @@ public class ScraperService {
 
     private final InputUrlsHandler inputUrlsHandler;
     private final OutputResultsHandler outputResultsHandler;
+    private final ProfileManager profileManager;
 
     public ScraperService(@NonNull InputUrlsHandler inputUrlsHandler,
-                          @NonNull OutputResultsHandler outputResultsHandler) {
+                          @NonNull OutputResultsHandler outputResultsHandler,
+                          @NonNull ProfileManager profileManager) {
         this.inputUrlsHandler = inputUrlsHandler;
         this.outputResultsHandler = outputResultsHandler;
+        this.profileManager = profileManager;
     }
 
-    public ModerationResult scrapSync(@NonNull ScrapRequest request) {
-        Objects.requireNonNull(request);
-        LOGGER.info("ScrapSync invoked with request [{}]", request);
+    public ModerationResult scrapSync(@NonNull String url,
+                                      @Nullable Boolean disableMedia,
+                                      @Nullable Boolean emulateDevice) {
+        Objects.requireNonNull(url);
+        ScraperProfile profile = profileManager.getProfile(url);
+        ScrapRequest request = new ScrapRequest(url, disableMedia, emulateDevice, profile);
+        LOGGER.info("ScrapSync invoked with request [{}] and profile [{}]", request, profile);
         try {
             UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(request);
             LOGGER.info("Url analyzer result is [{}] for request [{}]", urlAnalyzerResult, request);
-            String url = request.getUrl();
             if (!urlAnalyzerResult.shouldProcess()) {
                 return new ModerationResult(url, urlAnalyzerResult.name());
             }

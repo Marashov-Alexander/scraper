@@ -25,6 +25,7 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
     @Override
     protected void process(@NonNull ScrapResult scrapResult) {
         Long pHash = calculateHash(scrapResult);
+
         ModerationResult moderationResult = new ModerationResult(scrapResult.getScrapRequest().getUrl(), scrapResult.getTitle(), scrapResult.getScreenshotPath(), pHash);
         outputResultsHandler.putResults(moderationResult);
     }

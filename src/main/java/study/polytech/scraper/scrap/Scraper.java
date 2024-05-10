@@ -19,7 +19,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.ScrapRequest;
-import study.polytech.scraper.ScraperProfile;
+import study.polytech.scraper.profile.ScraperProfile;
 import study.polytech.scraper.analyzer.ScrapResult;
 import study.polytech.scraper.proxy.ProxyManager;
 
@@ -95,7 +95,7 @@ public class Scraper {
             disableMedia(devTools);
         }
         if (request.isEmulateDevice()) {
-            emulateDevice(devTools, ScraperProfile.DEFAULT);
+            emulateDevice(devTools, request.getProfile());
         }
     }
 

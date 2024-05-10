@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import study.polytech.scraper.profile.ScraperProfile;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,12 +15,15 @@ public class ScrapRequest implements Serializable {
     private final String url;
     private final boolean disableMedia;
     private final boolean emulateDevice;
+    private final ScraperProfile profile;
 
-    public ScrapRequest(@NonNull String url, @Nullable Boolean disableMedia, @Nullable Boolean emulateDevice) {
+    public ScrapRequest(@NonNull String url, @Nullable Boolean disableMedia, @Nullable Boolean emulateDevice, @NonNull ScraperProfile profile) {
         Objects.requireNonNull(url);
+        Objects.requireNonNull(profile);
         this.url = url;
         this.disableMedia = disableMedia != null && disableMedia;
         this.emulateDevice = emulateDevice != null && emulateDevice;
+        this.profile = profile;
     }
 
     @NonNull
@@ -33,6 +37,11 @@ public class ScrapRequest implements Serializable {
 
     public boolean isEmulateDevice() {
         return emulateDevice;
+    }
+
+    @NonNull
+    public ScraperProfile getProfile() {
+        return profile;
     }
 
     @Override
