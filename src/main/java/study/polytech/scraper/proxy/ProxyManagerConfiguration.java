@@ -1,4 +1,4 @@
-package study.polytech.scraper.resource;
+package study.polytech.scraper.proxy;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

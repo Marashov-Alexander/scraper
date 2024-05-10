@@ -1,4 +1,4 @@
-package study.polytech.scraper.resource;
+package study.polytech.scraper.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

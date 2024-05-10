@@ -1,13 +1,15 @@
-package study.polytech.scraper;
+package study.polytech.scraper.queue;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import study.polytech.scraper.ScrapRequest;
+import study.polytech.scraper.analyzer.ScrapResult;
 
 @Configuration
 public class QueuesConfiguration {
 
     @Bean
-    public ConfigurableQueue<String> urlsQueue() {
+    public ConfigurableQueue<ScrapRequest> urlsQueue() {
         return new ConfigurableQueue<>("urlsQueue");
     }
 

@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.queue;
 
 public class QueueIsFullException extends Exception {
 

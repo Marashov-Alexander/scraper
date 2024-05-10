@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.filter;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

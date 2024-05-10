@@ -1,10 +1,11 @@
-package study.polytech.scraper;
+package study.polytech.scraper.analyzer;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import study.polytech.scraper.ScrapRequest;
 
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -12,34 +13,34 @@ import java.util.Objects;
 
 public class ScrapResult implements Serializable {
 
-    private final String url;
+    private final ScrapRequest request;
     private final String title;
     private final Path screenshotPath;
     private final String errorStatus;
 
-    public ScrapResult(@NonNull String url,
+    public ScrapResult(@NonNull ScrapRequest request,
                        @NonNull String title,
                        @Nullable Path screenshotPath) {
-        Objects.requireNonNull(url);
+        Objects.requireNonNull(request);
         Objects.requireNonNull(title);
-        this.url = url;
+        this.request = request;
         this.title = title;
         this.screenshotPath = screenshotPath;
         this.errorStatus = null;
     }
 
-    public ScrapResult(@NonNull String url, @NonNull String errorStatus) {
-        Objects.requireNonNull(url);
+    public ScrapResult(@NonNull ScrapRequest request, @NonNull String errorStatus) {
+        Objects.requireNonNull(request);
         Objects.requireNonNull(errorStatus);
-        this.url = url;
+        this.request = request;
         this.title = null;
         this.screenshotPath = null;
         this.errorStatus = errorStatus;
     }
 
     @NonNull
-    public String getUrl() {
-        return url;
+    public ScrapRequest getScrapRequest() {
+        return request;
     }
 
     @Nullable
