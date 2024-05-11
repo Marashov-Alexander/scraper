@@ -7,26 +7,34 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.Objects;
 
 public class ModerationResult implements Serializable {
 
     private final String url;
+    private final String finalUrl;
     private final String title;
-    private final Path screenshotPath;
-    private final Long screenshotHash;
+    private final String defaultScreenshotName;
+    private final String screenshotWithoutMediaName;
+    private final Long defaultScreenshotHash;
+    private final Long screenshotWithoutMediaHash;
     private final String errorStatus;
 
     public ModerationResult(@NonNull String url,
+                            @Nullable String finalUrl,
                             @Nullable String title,
-                            @Nullable Path screenshotPath,
-                            @Nullable Long screenshotHash) {
+                            @Nullable String defaultScreenshotName,
+                            @Nullable String screenshotWithoutMediaName,
+                            @Nullable Long defaultScreenshotHash,
+                            @Nullable Long screenshotWithoutMediaHash) {
         Objects.requireNonNull(url);
         this.url = url;
+        this.finalUrl = finalUrl;
         this.title = title;
-        this.screenshotPath = screenshotPath;
-        this.screenshotHash = screenshotHash;
+        this.defaultScreenshotName = defaultScreenshotName;
+        this.screenshotWithoutMediaName = screenshotWithoutMediaName;
+        this.defaultScreenshotHash = defaultScreenshotHash;
+        this.screenshotWithoutMediaHash = screenshotWithoutMediaHash;
         this.errorStatus = null;
     }
 
@@ -34,9 +42,12 @@ public class ModerationResult implements Serializable {
         Objects.requireNonNull(url);
         Objects.requireNonNull(errorStatus);
         this.url = url;
+        this.finalUrl = null;
         this.title = null;
-        this.screenshotPath = null;
-        this.screenshotHash = null;
+        this.defaultScreenshotName = null;
+        this.screenshotWithoutMediaName = null;
+        this.defaultScreenshotHash = null;
+        this.screenshotWithoutMediaHash = null;
         this.errorStatus = errorStatus;
     }
 
@@ -46,18 +57,33 @@ public class ModerationResult implements Serializable {
     }
 
     @Nullable
+    public String getFinalUrl() {
+        return finalUrl;
+    }
+
+    @Nullable
     public String getTitle() {
         return title;
     }
 
     @Nullable
-    public Path getScreenshotPath() {
-        return screenshotPath;
+    public String getDefaultScreenshotName() {
+        return defaultScreenshotName;
     }
 
     @Nullable
-    public Long getScreenshotHash() {
-        return screenshotHash;
+    public String getScreenshotWithoutMediaName() {
+        return screenshotWithoutMediaName;
+    }
+
+    @Nullable
+    public Long getDefaultScreenshotHash() {
+        return defaultScreenshotHash;
+    }
+
+    @Nullable
+    public Long getScreenshotWithoutMediaHash() {
+        return screenshotWithoutMediaHash;
     }
 
     @Nullable

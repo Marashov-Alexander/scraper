@@ -2,6 +2,7 @@ package study.polytech.scraper.scrap;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,13 +39,12 @@ public class Scraper {
     private static final Logger LOGGER = LoggerFactory.getLogger(Scraper.class);
 
     private final ProxyManager proxyManager;
-    private final String screenshotDirectory;
+    private final ScreenshotManager screenshotManager;
 
     public Scraper(@NonNull ProxyManager proxyManager,
-                   @Value("${path.screenshots.directory}") String screenshotDirectory) {
-        Objects.requireNonNull(screenshotDirectory);
+                   @NonNull ScreenshotManager screenshotManager) {
         this.proxyManager = proxyManager;
-        this.screenshotDirectory = screenshotDirectory;
+        this.screenshotManager = screenshotManager;
     }
 
     @NonNull
@@ -158,36 +158,19 @@ public class Scraper {
 
     @NonNull
     private ScrapResult getScrapResult(@NonNull ScrapRequest request, @NonNull ChromeDriver driver) {
-        String url = request.getUrl();
         try {
+            configureScreenSize(driver);
             String title = driver.getTitle();
-            Path screenshotPath = takeScreenshot(url, driver);
-            return new ScrapResult(request, title, screenshotPath);
+            String finalUrl = driver.getCurrentUrl();
+            String defaultScreenshotName = screenshotManager.takeDefaultScreenshot(request, driver);
+            String screenshotWithoutMediaName = screenshotManager.takeScreenshotWithoutMedia(request, driver);
+            return new ScrapResult(request, title, finalUrl, defaultScreenshotName, screenshotWithoutMediaName);
         } catch (RuntimeException e) {
-            LOGGER.error("Failed to get scrap results for url [{}]", url, e);
+            LOGGER.error("Failed to get scrap results for request [{}]", request, e);
             return new ScrapResult(request, "get results error");
         }
     }
-
-    @Nullable
-    private Path takeScreenshot(@NonNull String url, @NonNull ChromeDriver driver) {
-        long startTime = System.currentTimeMillis();
-        File tmpScreenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        int urlHash = Math.abs(url.hashCode());
-        String screenshotPath = screenshotDirectory + urlHash + ".png";
-        File screenshotFile = new File(screenshotPath);
-        try {
-            if (screenshotFile.exists()) {
-                LOGGER.info("Old file [{}] removed [{}]", screenshotPath, screenshotFile.delete());
-            }
-            FileUtils.moveFile(tmpScreenshotFile, screenshotFile);
-            long delta = System.currentTimeMillis() - startTime;
-            LOGGER.info("Got screenshot [{}] for url [{}] for [{}] ms", screenshotFile, url, delta);
-            return screenshotFile.toPath();
-        } catch (IOException e) {
-            LOGGER.error("Error taking screenshot for url [{}]", url, e);
-            return null;
-        }
+    public void configureScreenSize(@NonNull ChromeDriver driver) {
+        driver.manage().window().setSize(new Dimension(1920, 1080));
     }
-
 }

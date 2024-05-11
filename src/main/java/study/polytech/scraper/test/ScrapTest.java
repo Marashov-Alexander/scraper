@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import study.polytech.scraper.ScrapRequest;
 import study.polytech.scraper.analyzer.ModerationResult;
 import study.polytech.scraper.ScraperService;
 
@@ -40,7 +39,7 @@ public class ScrapTest {
                     int index = counter.getAndIncrement();
 
                     long startTimeNanos = System.nanoTime();
-                    ModerationResult scrapResult = scraperService.scrapSync(url, null, null);
+                    ModerationResult scrapResult = scraperService.scrapSync(url, null, null, null);
                     long deltaNanos = System.nanoTime() - startTimeNanos;
 
                     saveResult(bufferedWriter, scrapResult, deltaNanos, index);
@@ -54,7 +53,7 @@ public class ScrapTest {
     }
 
     private void saveResult(@NonNull BufferedWriter bufferedWriter, ModerationResult scrapResult, long deltaNanos, int index) {
-        String record = String.format(RESULT_ROW_FORMAT, index, scrapResult.getUrl(), scrapResult.getScreenshotPath(), scrapResult.getErrorStatus(), deltaNanos);
+        String record = String.format(RESULT_ROW_FORMAT, index, scrapResult.getUrl(), scrapResult.getDefaultScreenshotName(), scrapResult.getErrorStatus(), deltaNanos);
         try {
             bufferedWriter.write(record);
         } catch (IOException e) {

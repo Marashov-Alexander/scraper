@@ -22,7 +22,9 @@ public class ScraperRestController {
     // TODO: change to POST with RequestBody param
     public ModerationResult scrapSync(@RequestParam(required = true) String url,
                                       @RequestParam(required = false) Boolean disableMedia,
-                                      @RequestParam(required = false) Boolean emulateDevice) {
-        return scraperService.scrapSync(url, disableMedia, emulateDevice);
+                                      @RequestParam(required = false) Boolean emulateDevice,
+                                      @RequestParam(required = false) Long urlId) {
+        String myUrl = "https://sversheno-suditt.sbs/my-news/offerta.php?clid=cmVmPSZkcml2ZT0wJmM9bG9hZFRpbWVzKmNzaSZzPTg3MyoxOTEzKjc2NyozOTMqOTgwKjM5MyoyLjc1KjUmcD0maD04KjgqQWRyZW5vJTIwKFRNKSUyMDYxOCZ0PVNhdCUyME1heSUyMDExJTIwMjAyNCUyMDE3JTNBMzclM0E0NiUyMEdNVCUyQjAzMDAlMjAoJUQwJTlDJUQwJUJFJUQxJTgxJUQwJUJBJUQwJUIyJUQwJUIwJTJDJTIwJUQxJTgxJUQxJTgyJUQwJUIwJUQwJUJEJUQwJUI0JUQwJUIwJUQxJTgwJUQxJTgyJUQwJUJEJUQwJUJFJUQwJUI1JTIwJUQwJUIyJUQxJTgwJUQwJUI1JUQwJUJDJUQxJThGKSZxPQ==";
+        return scraperService.scrapSync(myUrl, disableMedia, emulateDevice, urlId);
     }
 }
