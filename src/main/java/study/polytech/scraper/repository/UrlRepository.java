@@ -11,8 +11,12 @@ import java.util.List;
 
 public interface UrlRepository extends JpaRepository<TUrlEntity, Long> {
 
-    @Query("SELECT new study.polytech.scraper.filter.UrlInfo(u.id, u.baseUrl, u.domainAgeInDays) FROM TUrlEntity u")
+    @Query("SELECT new study.polytech.scraper.filter.UrlInfo(u.id, u.baseUrl, u.domainAgeInDays, u.decisionStatus) FROM TUrlEntity u")
     List<UrlInfo> findAllUrls();
+
+    // TODO: создать отдельный DTO класс, чтобы не тянуть те поля, которые не требуются
+    @Query("SELECT new study.polytech.scraper.filter.UrlInfo(u.id, u.baseUrl, u.domainAgeInDays, u.decisionStatus) FROM TUrlEntity u WHERE u.domainAgeInDays < :trustedDomainAge AND u.decisionStatus < 2 AND u.dateLastCheck < :minModerationTimeInMs")
+    List<UrlInfo> findUrlsForModeration(int trustedDomainAge, long minModerationTimeInMs);
 
     @Modifying
     @Transactional

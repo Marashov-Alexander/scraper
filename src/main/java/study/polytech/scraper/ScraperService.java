@@ -58,4 +58,27 @@ public class ScraperService {
             return new ModerationResult(request.getUrl(), "An error occurred" + e.getMessage());
         }
     }
+
+    @NonNull
+    public ModerationResult scrapAsync(@NonNull String url,
+                                       @Nullable Boolean disableMedia,
+                                       @Nullable Boolean emulateDevice,
+                                       @Nullable Long urlId) {
+        Objects.requireNonNull(url);
+        ScraperProfile profile = profileManager.getProfile(url);
+        long id = urlId == null ? url.hashCode() : urlId;
+        ScrapRequest request = new ScrapRequest(id, url, disableMedia, emulateDevice, profile);
+        LOGGER.info("ScrapAsync invoked with request [{}] and profile [{}]", request, profile);
+        try {
+            UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(request);
+            LOGGER.info("Url analyzer result is [{}] for request [{}]", urlAnalyzerResult, request);
+            return new ModerationResult(url, urlAnalyzerResult.name());
+        } catch (QueueIsFullException e) {
+            LOGGER.error("Queue is full, request [{}] rejected", request, e);
+            return new ModerationResult(request.getUrl(), "Unable to process url. Queue is full");
+        } catch (RuntimeException e) {
+            LOGGER.error("An error occurred, url [{}] rejected", request, e);
+            return new ModerationResult(request.getUrl(), "An error occurred" + e.getMessage());
+        }
+    }
 }

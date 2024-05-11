@@ -5,15 +5,17 @@ public class UrlInfo {
     private long id;
     private String baseUrl;
     private Integer ageInDays;
+    private int decisionStatus;
 
     public UrlInfo() {
 
     }
 
-    public UrlInfo(long id, String baseUrl, Integer ageInDays) {
+    public UrlInfo(long id, String baseUrl, Integer ageInDays, int decisionStatus) {
         this.id = id;
         this.baseUrl = baseUrl;
         this.ageInDays = ageInDays;
+        this.decisionStatus = decisionStatus;
     }
 
     public long getId() {
@@ -38,5 +40,13 @@ public class UrlInfo {
 
     public void setAgeInDays(Integer ageInDays) {
         this.ageInDays = ageInDays;
+    }
+
+    public int getDecisionStatus() {
+        return decisionStatus;
+    }
+
+    public void setDecisionStatus(int decisionStatus) {
+        this.decisionStatus = decisionStatus;
     }
 }
