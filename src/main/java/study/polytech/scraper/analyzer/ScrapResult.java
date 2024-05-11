@@ -2,7 +2,6 @@ package study.polytech.scraper.analyzer;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import study.polytech.scraper.ScrapRequest;
@@ -17,13 +16,17 @@ public class ScrapResult implements Serializable {
     private final String finalUrl;
     private final String defaultScreenshotName;
     private final String screenshotWithoutMediaName;
+    private final String pageSource;
+    private final String variables;
     private final String errorStatus;
 
     public ScrapResult(@NonNull ScrapRequest request,
                        @NonNull String title,
                        @NonNull String finalUrl,
                        @Nullable String defaultScreenshotName,
-                       @Nullable String screenshotWithoutMediaName) {
+                       @Nullable String screenshotWithoutMediaName,
+                       @Nullable String pageSource,
+                       @Nullable String variables) {
         Objects.requireNonNull(request);
         Objects.requireNonNull(title);
         Objects.requireNonNull(finalUrl);
@@ -32,6 +35,8 @@ public class ScrapResult implements Serializable {
         this.finalUrl = finalUrl;
         this.defaultScreenshotName = defaultScreenshotName;
         this.screenshotWithoutMediaName = screenshotWithoutMediaName;
+        this.pageSource = pageSource;
+        this.variables = variables;
         this.errorStatus = null;
     }
 
@@ -43,6 +48,8 @@ public class ScrapResult implements Serializable {
         this.finalUrl = null;
         this.defaultScreenshotName = null;
         this.screenshotWithoutMediaName = null;
+        this.pageSource = null;
+        this.variables = null;
         this.errorStatus = errorStatus;
     }
 
@@ -72,22 +79,39 @@ public class ScrapResult implements Serializable {
     }
 
     @Nullable
+    public String getPageSource() {
+        return pageSource;
+    }
+
+    @Nullable
+    public String getVariables() {
+        return variables;
+    }
+
+    @Nullable
     public String getErrorStatus() {
         return errorStatus;
     }
 
     @Override
     public boolean equals(@Nullable Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        return EqualsBuilder.reflectionEquals(this, o, "pageSource", "variables");
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return HashCodeBuilder.reflectionHashCode(this, "pageSource", "variables");
     }
 
     @Override
     public String toString() {
-        return ReflectionToStringBuilder.toString(this);
+        return "ScrapResult{" +
+                "request=" + request +
+                ", title='" + title + '\'' +
+                ", finalUrl='" + finalUrl + '\'' +
+                ", defaultScreenshotName='" + defaultScreenshotName + '\'' +
+                ", screenshotWithoutMediaName='" + screenshotWithoutMediaName + '\'' +
+                ", errorStatus='" + errorStatus + '\'' +
+                '}';
     }
 }

@@ -3,15 +3,16 @@ package study.polytech.scraper.analyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.DecisionStatus;
 import study.polytech.scraper.OutputResultsHandler;
 import study.polytech.scraper.entity.TUrlEntity;
+import study.polytech.scraper.entity.TUrlSourcesEntity;
 import study.polytech.scraper.phash.PHashCalculatorService;
 import study.polytech.scraper.queue.ConfigurableQueue;
 import study.polytech.scraper.queue.QueueElementsConsumer;
 import study.polytech.scraper.repository.UrlRepository;
+import study.polytech.scraper.repository.UrlSourceRepository;
 
 @Component
 public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
@@ -22,15 +23,18 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
     private final PHashCalculatorService pHashCalculatorService;
     private final OutputResultsHandler outputResultsHandler;
     private final UrlRepository urlRepository;
+    private final UrlSourceRepository urlSourceRepository;
 
     public ScrapResultsConsumer(@NonNull ConfigurableQueue<ScrapResult> openedPagesQueue,
                                 @NonNull OutputResultsHandler outputResultsHandler,
                                 @NonNull PHashCalculatorService pHashCalculatorService,
-                                @NonNull UrlRepository urlRepository) {
+                                @NonNull UrlRepository urlRepository,
+                                @NonNull UrlSourceRepository urlSourceRepository) {
         super(openedPagesQueue);
         this.outputResultsHandler = outputResultsHandler;
         this.pHashCalculatorService = pHashCalculatorService;
         this.urlRepository = urlRepository;
+        this.urlSourceRepository = urlSourceRepository;
     }
 
     @Override
@@ -44,12 +48,27 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
 
         TUrlEntity updatedUrlEntity = updateUrlEntity(scrapResult, urlEntity);
         urlRepository.save(updatedUrlEntity);
+        saveUrlSources(scrapResult.getRequest().getUrlId(), scrapResult);
 
         ModerationResult moderationResult = new ModerationResult(scrapResult.getRequest().getUrl(),
                 scrapResult.getFinalUrl(), scrapResult.getTitle(),
                 scrapResult.getDefaultScreenshotName(), scrapResult.getScreenshotWithoutMediaName(),
                 updatedUrlEntity.getReferenceScreenshotHash(), updatedUrlEntity.getDeviationScreenshotHash());
         outputResultsHandler.putResults(moderationResult);
+    }
+
+    private void saveUrlSources(long id, @NonNull ScrapResult scrapResult) {
+        String pageSource = scrapResult.getPageSource();
+        String variables = scrapResult.getVariables();
+        String finalUrl = scrapResult.getFinalUrl();
+        String url = scrapResult.getRequest().getUrl();
+        TUrlSourcesEntity urlSourcesEntity = new TUrlSourcesEntity();
+        urlSourcesEntity.setFinalUrl(finalUrl);
+        urlSourcesEntity.setCode(pageSource);
+        urlSourcesEntity.setSourceUrl(url);
+        urlSourcesEntity.setVariables(variables);
+        urlSourcesEntity.setId(id);
+        urlSourceRepository.save(urlSourcesEntity);
     }
 
     private TUrlEntity createNewEntity(ScrapResult scrapResult) {

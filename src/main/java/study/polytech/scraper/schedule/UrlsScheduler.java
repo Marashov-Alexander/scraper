@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UrlsScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlsScheduler.class);
-    private static final long MODERATION_INTERVAL_IN_SECONDS = 5 * 60;
+    private static final long MODERATION_INTERVAL_IN_SECONDS = 1 * 60;
     private static final int TRUSTED_DOMAIN_AGE_IN_DAYS = 100_000;
 
     private final UrlRepository urlRepository;

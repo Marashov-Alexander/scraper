@@ -1,9 +1,7 @@
 package study.polytech.scraper.scrap;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -15,23 +13,19 @@ import org.openqa.selenium.devtools.v118.emulation.model.UserAgentMetadata;
 import org.openqa.selenium.devtools.v118.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.ScrapRequest;
-import study.polytech.scraper.profile.ScraperProfile;
 import study.polytech.scraper.analyzer.ScrapResult;
+import study.polytech.scraper.profile.ScraperProfile;
 import study.polytech.scraper.proxy.ProxyManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class Scraper {
@@ -40,11 +34,14 @@ public class Scraper {
 
     private final ProxyManager proxyManager;
     private final ScreenshotManager screenshotManager;
+    private final ScriptsManager scriptsManager;
 
     public Scraper(@NonNull ProxyManager proxyManager,
-                   @NonNull ScreenshotManager screenshotManager) {
+                   @NonNull ScreenshotManager screenshotManager,
+                   @NonNull ScriptsManager scriptsManager) {
         this.proxyManager = proxyManager;
         this.screenshotManager = screenshotManager;
+        this.scriptsManager = scriptsManager;
     }
 
     @NonNull
@@ -164,7 +161,9 @@ public class Scraper {
             String finalUrl = driver.getCurrentUrl();
             String defaultScreenshotName = screenshotManager.takeDefaultScreenshot(request, driver);
             String screenshotWithoutMediaName = screenshotManager.takeScreenshotWithoutMedia(request, driver);
-            return new ScrapResult(request, title, finalUrl, defaultScreenshotName, screenshotWithoutMediaName);
+            String pageSource = driver.getPageSource();
+            String jsVariables = scriptsManager.getJsVariables(request, driver);
+            return new ScrapResult(request, title, finalUrl, defaultScreenshotName, screenshotWithoutMediaName, pageSource, jsVariables);
         } catch (RuntimeException e) {
             LOGGER.error("Failed to get scrap results for request [{}]", request, e);
             return new ScrapResult(request, "get results error");
