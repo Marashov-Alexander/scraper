@@ -36,6 +36,9 @@ public class WhoIsService {
     public WhoIsService(@NonNull UrlRepository repository) {
         this.repository = repository;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
+        if (true) {
+            return;
+        }
         executorService.scheduleAtFixedRate(this::run, 0, INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
     }
 

@@ -12,18 +12,24 @@ import java.util.Objects;
 
 public class ScrapRequest implements Serializable {
 
+    private final long urlId;
     private final String url;
     private final boolean disableMedia;
     private final boolean emulateDevice;
     private final ScraperProfile profile;
 
-    public ScrapRequest(@NonNull String url, @Nullable Boolean disableMedia, @Nullable Boolean emulateDevice, @NonNull ScraperProfile profile) {
+    public ScrapRequest(long urlId, @NonNull String url, @Nullable Boolean disableMedia, @Nullable Boolean emulateDevice, @NonNull ScraperProfile profile) {
         Objects.requireNonNull(url);
         Objects.requireNonNull(profile);
+        this.urlId = urlId;
         this.url = url;
         this.disableMedia = disableMedia != null && disableMedia;
         this.emulateDevice = emulateDevice != null && emulateDevice;
         this.profile = profile;
+    }
+
+    public long getUrlId() {
+        return urlId;
     }
 
     @NonNull
