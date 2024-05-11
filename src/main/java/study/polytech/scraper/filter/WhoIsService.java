@@ -3,6 +3,7 @@ package study.polytech.scraper.filter;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -33,13 +34,13 @@ public class WhoIsService {
     private final ScheduledExecutorService executorService;
     private Iterator<UrlInfo> urlInfos;
 
-    public WhoIsService(@NonNull UrlRepository repository) {
+    public WhoIsService(@Value("${feature.whois.enabled}") boolean enabled,
+                        @NonNull UrlRepository repository) {
         this.repository = repository;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
-        if (true) {
-            return;
+        if (enabled) {
+            executorService.scheduleAtFixedRate(this::run, 0, INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
-        executorService.scheduleAtFixedRate(this::run, 0, INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
     }
 
     @PreDestroy

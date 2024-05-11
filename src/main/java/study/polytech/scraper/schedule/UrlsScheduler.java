@@ -3,6 +3,7 @@ package study.polytech.scraper.schedule;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.DecisionStatus;
@@ -29,18 +30,21 @@ public class UrlsScheduler {
     private final ScheduledExecutorService moderationExecutor;
     private final ScheduledExecutorService scheduledUrlsExecutor;
     private final Random random;
-    private final AtomicBoolean emulateDevice;
+    private final AtomicBoolean useMasking;
 
-    public UrlsScheduler(@NonNull UrlRepository urlRepository,
+    public UrlsScheduler(@Value("${feature.scheduler.enabled}") boolean enabled,
+                         @NonNull UrlRepository urlRepository,
                          @NonNull ScraperService scraperService) {
         this.urlRepository = urlRepository;
         this.scraperService = scraperService;
         this.moderationExecutor = Executors.newSingleThreadScheduledExecutor();
         this.scheduledUrlsExecutor = Executors.newSingleThreadScheduledExecutor();
         this.random = new Random();
-        this.emulateDevice = new AtomicBoolean();
+        this.useMasking = new AtomicBoolean();
 
-        this.moderationExecutor.scheduleAtFixedRate(this::scheduleModeration, 0L, MODERATION_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
+        if (enabled) {
+            this.moderationExecutor.scheduleAtFixedRate(this::scheduleModeration, 0L, MODERATION_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
+        }
     }
 
     @PreDestroy
@@ -50,11 +54,11 @@ public class UrlsScheduler {
     }
 
     private void scheduleModeration() {
-        boolean emulateDeviceValue = emulateDevice.get();
+        boolean useMasking = this.useMasking.get();
         long minModerationTimeInMs = System.currentTimeMillis();
 //        long minModerationTimeInMs = System.currentTimeMillis() - MODERATION_INTERVAL_IN_SECONDS;
         LOGGER.info("New moderation process started: emulateDevice=[{}], minModerationTime=[{}], trustedDomainAge=[{}]",
-                emulateDeviceValue, minModerationTimeInMs, TRUSTED_DOMAIN_AGE_IN_DAYS);
+                useMasking, minModerationTimeInMs, TRUSTED_DOMAIN_AGE_IN_DAYS);
 
         List<UrlInfo> urlsForModeration = urlRepository.findUrlsForModeration(TRUSTED_DOMAIN_AGE_IN_DAYS, minModerationTimeInMs);
         LOGGER.info("Found [{}] urls for moderation", urlsForModeration.size());
@@ -62,15 +66,15 @@ public class UrlsScheduler {
         for (UrlInfo urlInfo : urlsForModeration) {
             boolean disableMedia = urlInfo.getDecisionStatus() == DecisionStatus.LIGHT_MODERATION.getCode();
             long delayInSeconds = random.nextLong(MODERATION_INTERVAL_IN_SECONDS);
-            scheduledUrlsExecutor.schedule(() -> putUrlToScraper(urlInfo, disableMedia, emulateDeviceValue), delayInSeconds, (TimeUnit) TimeUnit.SECONDS);
+            scheduledUrlsExecutor.schedule(() -> putUrlToScraper(urlInfo, useMasking, disableMedia), delayInSeconds, (TimeUnit) TimeUnit.SECONDS);
             LOGGER.info("Url [{}] scheduled with delay [{}] seconds", urlInfo, delayInSeconds);
         }
 
-        LOGGER.info("Moderation process finished with device emulation parameter [{}]", emulateDeviceValue);
-        emulateDevice.set(!emulateDeviceValue);
+        LOGGER.info("Moderation process finished with device emulation parameter [{}]", useMasking);
+        this.useMasking.set(!useMasking);
     }
 
-    private void putUrlToScraper(@NonNull UrlInfo urlInfo, boolean disableMedia, boolean emulateDevice) {
-        scraperService.scrapAsync(urlInfo.getBaseUrl(), disableMedia, emulateDevice, urlInfo.getId());
+    private void putUrlToScraper(@NonNull UrlInfo urlInfo, boolean useMasking, boolean disableMedia) {
+        scraperService.scrapAsync(urlInfo.getBaseUrl(), useMasking, disableMedia, urlInfo.getId());
     }
 }

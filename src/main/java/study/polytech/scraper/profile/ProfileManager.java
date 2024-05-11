@@ -24,9 +24,9 @@ public class ProfileManager {
     }
 
     @NonNull
-    public ScraperProfile getProfile(String url) {
+    public ScraperProfile getProfile(String url, boolean useMasking) {
         try {
-            ScraperProfile scraperProfile = profileRepository.findRandom()
+            ScraperProfile scraperProfile = profileRepository.findRandom(useMasking)
                     .map(this::convertToScraperProfile)
                     .orElse(null);
             if (scraperProfile == null) {

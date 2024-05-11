@@ -87,13 +87,10 @@ public class Scraper {
         DevTools devTools = driver.getDevTools();
         devTools.createSession();
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
         if (request.isDisableMedia()) {
             disableMedia(devTools);
         }
-        if (request.isEmulateDevice()) {
-            emulateDevice(devTools, request.getProfile());
-        }
+        emulateDevice(devTools, request.getProfile());
     }
 
     private static void emulateDevice(DevTools devTools, ScraperProfile profile) {

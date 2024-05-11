@@ -20,8 +20,8 @@ public class ScrapTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScrapTest.class);
 
-    private static final Path INPUT_PATH = Paths.get("/Users/alexander.marashov/Documents/scraper-main/src/main/resources/urls.csv");
-    private static final Path OUTPUT_PATH = Paths.get("/Users/alexander.marashov/Documents/scraper-main/src/main/resources/result_without_images.csv");
+    private static final Path INPUT_PATH = Paths.get("urls.csv");
+    private static final Path OUTPUT_PATH = Paths.get("result_without_images.csv");
     private static final String RESULT_ROW_FORMAT = "%d±%s±%s±%s±%d\n";
 
     private final ScraperService scraperService;
@@ -39,7 +39,7 @@ public class ScrapTest {
                     int index = counter.getAndIncrement();
 
                     long startTimeNanos = System.nanoTime();
-                    ModerationResult scrapResult = scraperService.scrapSync(url, null, null, null);
+                    ModerationResult scrapResult = scraperService.scrapSync(url, true, null,null);
                     long deltaNanos = System.nanoTime() - startTimeNanos;
 
                     saveResult(bufferedWriter, scrapResult, deltaNanos, index);

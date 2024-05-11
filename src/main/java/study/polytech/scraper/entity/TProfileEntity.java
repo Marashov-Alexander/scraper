@@ -57,13 +57,17 @@ public class TProfileEntity {
     @Column(name = "is_mobile")
     private boolean isMobile;
 
+    @Basic
+    @Column(name = "is_for_masking")
+    private boolean isForMasking;
+
     public TProfileEntity() {
 
     }
 
     public TProfileEntity(int id, int width, int height, int hardwareConcurrency, int maxTouchPoints,
                           String userAgent, String acceptLanguage, String brandsVersions, String fullVersion,
-                          String platform, String platformVersion, String architecture, String model, boolean isMobile) {
+                          String platform, String platformVersion, String architecture, String model, boolean isMobile, boolean isForMasking) {
         this.id = id;
         this.width = width;
         this.height = height;
@@ -78,6 +82,7 @@ public class TProfileEntity {
         this.architecture = architecture;
         this.model = model;
         this.isMobile = isMobile;
+        this.isForMasking = isForMasking;
     }
 
     public int getId() {
@@ -192,6 +197,14 @@ public class TProfileEntity {
         isMobile = mobile;
     }
 
+    public boolean isForMasking() {
+        return isForMasking;
+    }
+
+    public void setForMasking(boolean forMasking) {
+        isForMasking = forMasking;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -225,6 +238,7 @@ public class TProfileEntity {
                 ", architecture='" + architecture + '\'' +
                 ", model='" + model + '\'' +
                 ", isMobile=" + isMobile +
+                ", isForMasking=" + isForMasking +
                 '}';
     }
 }
