@@ -1,4 +1,4 @@
-package study.polytech.scraper;
+package study.polytech.scraper.profile;
 
 import com.google.common.collect.Lists;
 import org.openqa.selenium.devtools.v118.emulation.model.UserAgentBrandVersion;
@@ -120,5 +120,24 @@ public class ScraperProfile {
 
     public boolean isMobile() {
         return isMobile;
+    }
+
+    @Override
+    public String toString() {
+        return "ScraperProfile{" +
+                "deviceWidth=" + deviceWidth +
+                ", deviceHeight=" + deviceHeight +
+                ", hardwareConcurrency=" + hardwareConcurrency +
+                ", maxTouchPoints=" + maxTouchPoints +
+                ", userAgent='" + userAgent + '\'' +
+                ", acceptLanguage='" + acceptLanguage + '\'' +
+                ", brandVersions=" + brandVersions +
+                ", fullVersion='" + fullVersion + '\'' +
+                ", platform='" + platform + '\'' +
+                ", platformVersion='" + platformVersion + '\'' +
+                ", architecture='" + architecture + '\'' +
+                ", model='" + model + '\'' +
+                ", isMobile=" + isMobile +
+                '}';
     }
 }
