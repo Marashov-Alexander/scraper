@@ -23,36 +23,18 @@ public class ScreenshotManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScreenshotManager.class);
 
-    private static final String HIDE_MEDIA_SCRIPT = """
-            document.querySelectorAll('img').forEach(img => {
-                img.style.display = 'none';
-                img.style.border = '1px solid #ccc';
-            });
-            document.querySelectorAll('*').forEach(el => {
-                const computedStyle = window.getComputedStyle(el);
-                if (computedStyle.backgroundImage !== 'none') {
-                    el.style.backgroundImage = 'none';
-                    el.style.border = '1px solid #ccc';
-                }
-            });
-            document.querySelectorAll('video, iframe').forEach(el => {
-                if (el.tagName.toLowerCase() === 'iframe' &&
-                    (el.src.includes("youtube.com") || el.src.includes("vimeo.com"))) {
-                    el.style.display = 'none';
-                }
-                if (el.tagName.toLowerCase() === 'video') {
-                    el.style.display = 'none';
-                }
-            });""";
-
     private static final String DEFAULT_OPERATION = "default";
     private static final String HIDE_MEDIA_OPERATION = "hidden";
 
     private final String screenshotDirectory;
+    private final ScriptsManager scriptsManager;
 
-    public ScreenshotManager(@Value("${path.screenshots.directory}") String screenshotDirectory) {
+    public ScreenshotManager(@Value("${path.screenshots.directory}") String screenshotDirectory,
+                             @NonNull ScriptsManager scriptsManager) {
         Objects.requireNonNull(screenshotDirectory);
+        Objects.requireNonNull(scriptsManager);
         this.screenshotDirectory = screenshotDirectory;
+        this.scriptsManager = scriptsManager;
     }
 
     @NonNull
@@ -69,19 +51,9 @@ public class ScreenshotManager {
 
     @Nullable
     public String takeScreenshotWithoutMedia(@NonNull ScrapRequest request, @NonNull ChromeDriver driver) {
-        return hideMedia(request, driver)
+        return scriptsManager.hideMedia(request, driver)
                 ? takeScreenshot(request.getUrl(), driver, HIDE_MEDIA_OPERATION)
                 : null;
-    }
-
-    private boolean hideMedia(@NonNull ScrapRequest request, @NonNull ChromeDriver driver) {
-        try {
-            driver.executeScript(HIDE_MEDIA_SCRIPT);
-            return true;
-        } catch (RuntimeException e) {
-            LOGGER.error("Hide media content error for request [{}]", request, e);
-            return false;
-        }
     }
 
     @Nullable
