@@ -8,10 +8,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.ScrapRequest;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Component
 public class ScriptsManager {
 
@@ -44,8 +40,27 @@ public class ScriptsManager {
                 variables += name + "\\n";
             return variables;""";
 
+    private static final String SPOOF_JS_SCOPE_SCRIPT_MASK = """
+            Object.defineProperty(navigator, "webdriver", {configurable: true, value: false});
+            """;
+
+    private static final String SPOOF_JS_SCOPE_SCRIPT_UNMASK = """
+            Object.defineProperty(navigator, "webdriver", {configurable: true, value: true});
+            """;
+
     public ScriptsManager() {
 
+    }
+
+    public void spoofJsScope(@NonNull ScrapRequest request, @NonNull ChromeDriver driver) {
+        try {
+            String script = request.getProfile().isForMasking()
+                    ? SPOOF_JS_SCOPE_SCRIPT_MASK
+                    : SPOOF_JS_SCOPE_SCRIPT_UNMASK;
+            driver.executeScript(script);
+        } catch (RuntimeException e) {
+            LOGGER.error("Spoof js scope error for request [{}]", request, e);
+        }
     }
 
     public boolean hideMedia(@NonNull ScrapRequest request, @NonNull ChromeDriver driver) {

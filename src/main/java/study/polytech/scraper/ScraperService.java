@@ -32,13 +32,13 @@ public class ScraperService {
     }
 
     public ModerationResult scrapSync(@NonNull String url,
+                                      boolean useMasking,
                                       @Nullable Boolean disableMedia,
-                                      @Nullable Boolean emulateDevice,
                                       @Nullable Long urlId) {
         Objects.requireNonNull(url);
-        ScraperProfile profile = profileManager.getProfile(url);
+        ScraperProfile profile = profileManager.getProfile(url, useMasking);
         long id = urlId == null ? url.hashCode() : urlId;
-        ScrapRequest request = new ScrapRequest(id, url, disableMedia, emulateDevice, profile);
+        ScrapRequest request = new ScrapRequest(id, url, disableMedia, profile);
         LOGGER.info("ScrapSync invoked with request [{}] and profile [{}]", request, profile);
         try {
             UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(request);
@@ -61,13 +61,13 @@ public class ScraperService {
 
     @NonNull
     public ModerationResult scrapAsync(@NonNull String url,
+                                       boolean useMasking,
                                        @Nullable Boolean disableMedia,
-                                       @Nullable Boolean emulateDevice,
                                        @Nullable Long urlId) {
         Objects.requireNonNull(url);
-        ScraperProfile profile = profileManager.getProfile(url);
+        ScraperProfile profile = profileManager.getProfile(url, useMasking);
         long id = urlId == null ? url.hashCode() : urlId;
-        ScrapRequest request = new ScrapRequest(id, url, disableMedia, emulateDevice, profile);
+        ScrapRequest request = new ScrapRequest(id, url, disableMedia, profile);
         LOGGER.info("ScrapAsync invoked with request [{}] and profile [{}]", request, profile);
         try {
             UrlAnalyzerResult urlAnalyzerResult = inputUrlsHandler.handle(request);

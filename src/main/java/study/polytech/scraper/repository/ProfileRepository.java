@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<TProfileEntity, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM t_profile ORDER BY RANDOM() LIMIT 1")
-    Optional<TProfileEntity> findRandom();
+    @Query(nativeQuery = true, value = "SELECT * FROM t_profile WHERE is_for_masking = :isForMasking ORDER BY RANDOM() LIMIT 1")
+    Optional<TProfileEntity> findRandom(boolean isForMasking);
 
 }

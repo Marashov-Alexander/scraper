@@ -1,7 +1,6 @@
 package study.polytech.scraper.scrap;
 
 import com.google.common.collect.Lists;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -11,6 +10,7 @@ import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v118.emulation.Emulation;
 import org.openqa.selenium.devtools.v118.emulation.model.UserAgentMetadata;
 import org.openqa.selenium.devtools.v118.network.Network;
+import org.openqa.selenium.devtools.v118.page.model.Viewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -25,7 +25,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class Scraper {
@@ -82,18 +81,16 @@ public class Scraper {
         });
     }
 
-    private static void configureBrowser(ChromeDriver driver,
-                                         ScrapRequest request) {
+    private void configureBrowser(ChromeDriver driver,
+                                  ScrapRequest request) {
         DevTools devTools = driver.getDevTools();
         devTools.createSession();
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
         if (request.isDisableMedia()) {
             disableMedia(devTools);
         }
-        if (request.isEmulateDevice()) {
-            emulateDevice(devTools, request.getProfile());
-        }
+        emulateDevice(devTools, request.getProfile());
+        scriptsManager.spoofJsScope(request, driver);
     }
 
     private static void emulateDevice(DevTools devTools, ScraperProfile profile) {
@@ -135,7 +132,8 @@ public class Scraper {
     private static ChromeOptions createChromeOptions(@NonNull String localProxy) {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setAcceptInsecureCerts(true);
-//        chromeOptions.addArguments("--headless", "--disable-gpu");
+        chromeOptions.addArguments("--headless", "--disable-gpu");
+        chromeOptions.addArguments("--window-size=1920,1080");
 
         Proxy proxy = new Proxy()
                 .setAutodetect(false)
@@ -170,6 +168,7 @@ public class Scraper {
         }
     }
     public void configureScreenSize(@NonNull ChromeDriver driver) {
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+        driver.getDevTools().send(
+                Emulation.setDeviceMetricsOverride(1920, 1080, 1, true, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
     }
 }

@@ -24,9 +24,9 @@ public class ProfileManager {
     }
 
     @NonNull
-    public ScraperProfile getProfile(String url) {
+    public ScraperProfile getProfile(String url, boolean useMasking) {
         try {
-            ScraperProfile scraperProfile = profileRepository.findRandom()
+            ScraperProfile scraperProfile = profileRepository.findRandom(useMasking)
                     .map(this::convertToScraperProfile)
                     .orElse(null);
             if (scraperProfile == null) {
@@ -47,7 +47,7 @@ public class ProfileManager {
         return new ScraperProfile(
                 entity.getWidth(), entity.getHeight(), entity.getHardwareConcurrency(), entity.getMaxTouchPoints(),
                 entity.getUserAgent(), entity.getAcceptLanguage(), toBrandVersions(entity.getBrandsVersions()),
-                entity.getFullVersion(), entity.getPlatform(), entity.getPlatformVersion(), entity.getArchitecture(), entity.getModel(), entity.isMobile()
+                entity.getFullVersion(), entity.getPlatform(), entity.getPlatformVersion(), entity.getArchitecture(), entity.getModel(), entity.isMobile(), entity.isForMasking()
         );
     }
 

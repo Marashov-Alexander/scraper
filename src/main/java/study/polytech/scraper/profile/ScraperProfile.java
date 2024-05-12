@@ -25,6 +25,7 @@ public class ScraperProfile {
             "13.0.0",
             "",
             "M2101K6G",
+            true,
             true
     );
 
@@ -41,6 +42,7 @@ public class ScraperProfile {
     private final String architecture;
     private final String model;
     private final boolean isMobile;
+    private final boolean isForMasking;
 
     public ScraperProfile(int deviceWidth,
                           int deviceHeight,
@@ -54,7 +56,8 @@ public class ScraperProfile {
                           @NonNull String platformVersion,
                           @NonNull String architecture,
                           @NonNull String model,
-                          boolean isMobile) {
+                          boolean isMobile,
+                          boolean isForMasking) {
         this.deviceWidth = deviceWidth;
         this.deviceHeight = deviceHeight;
         this.hardwareConcurrency = hardwareConcurrency;
@@ -68,6 +71,7 @@ public class ScraperProfile {
         this.architecture = architecture;
         this.model = model;
         this.isMobile = isMobile;
+        this.isForMasking = isForMasking;
     }
 
     public int getDeviceWidth() {
@@ -122,6 +126,10 @@ public class ScraperProfile {
         return isMobile;
     }
 
+    public boolean isForMasking() {
+        return isForMasking;
+    }
+
     @Override
     public String toString() {
         return "ScraperProfile{" +
@@ -138,6 +146,7 @@ public class ScraperProfile {
                 ", architecture='" + architecture + '\'' +
                 ", model='" + model + '\'' +
                 ", isMobile=" + isMobile +
+                ", isForMasking=" + isForMasking +
                 '}';
     }
 }
