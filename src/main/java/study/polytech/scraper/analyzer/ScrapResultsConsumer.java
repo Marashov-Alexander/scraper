@@ -2,6 +2,7 @@ package study.polytech.scraper.analyzer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import study.polytech.scraper.DecisionStatus;
@@ -18,23 +19,25 @@ import study.polytech.scraper.repository.UrlSourceRepository;
 public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScrapResultsConsumer.class);
-    private static final int DISTANCE_THRESHOLD = 10;
 
     private final PHashCalculatorService pHashCalculatorService;
     private final OutputResultsHandler outputResultsHandler;
     private final UrlRepository urlRepository;
     private final UrlSourceRepository urlSourceRepository;
+    private final int distanceThreshold;
 
     public ScrapResultsConsumer(@NonNull ConfigurableQueue<ScrapResult> openedPagesQueue,
                                 @NonNull OutputResultsHandler outputResultsHandler,
                                 @NonNull PHashCalculatorService pHashCalculatorService,
                                 @NonNull UrlRepository urlRepository,
-                                @NonNull UrlSourceRepository urlSourceRepository) {
+                                @NonNull UrlSourceRepository urlSourceRepository,
+                                @NonNull @Value("${feature.phash.distance.threshold}") int distanceThreshold) {
         super(openedPagesQueue);
         this.outputResultsHandler = outputResultsHandler;
         this.pHashCalculatorService = pHashCalculatorService;
         this.urlRepository = urlRepository;
         this.urlSourceRepository = urlSourceRepository;
+        this.distanceThreshold = distanceThreshold;
     }
 
     @Override
@@ -105,9 +108,9 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
             } else {
                 int hammingDistance = Long.bitCount(oldUrlEntity.getReferenceLightScreenshotHash() ^ screenshotWithoutMediaHash);
                 int newStatus;
-                if (oldStatus == DecisionStatus.LIGHT_MODERATION.getCode() && hammingDistance > DISTANCE_THRESHOLD) {
+                if (oldStatus == DecisionStatus.LIGHT_MODERATION.getCode() && hammingDistance > distanceThreshold) {
                     newStatus = DecisionStatus.DEFAULT_MODERATION.getCode();
-                } else if (hammingDistance > DISTANCE_THRESHOLD) {
+                } else if (hammingDistance > distanceThreshold) {
                     newStatus = DecisionStatus.MANUAL_CHECK.getCode();
                 } else {
                     newStatus = DecisionStatus.LIGHT_MODERATION.getCode();
