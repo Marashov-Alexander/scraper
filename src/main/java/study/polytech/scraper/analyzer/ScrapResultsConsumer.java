@@ -56,7 +56,7 @@ public class ScrapResultsConsumer extends QueueElementsConsumer<ScrapResult> {
         ModerationResult moderationResult = new ModerationResult(scrapResult.getRequest().getUrl(),
                 scrapResult.getFinalUrl(), scrapResult.getTitle(),
                 scrapResult.getDefaultScreenshotName(), scrapResult.getScreenshotWithoutMediaName(),
-                updatedUrlEntity.getReferenceScreenshotHash(), updatedUrlEntity.getDeviationScreenshotHash());
+                updatedUrlEntity.getReferenceScreenshotHash(), updatedUrlEntity.getReferenceLightScreenshotHash());
         outputResultsHandler.putResults(moderationResult);
     }
 

@@ -47,7 +47,7 @@ public class ProfileManager {
         return new ScraperProfile(
                 entity.getWidth(), entity.getHeight(), entity.getHardwareConcurrency(), entity.getMaxTouchPoints(),
                 entity.getUserAgent(), entity.getAcceptLanguage(), toBrandVersions(entity.getBrandsVersions()),
-                entity.getFullVersion(), entity.getPlatform(), entity.getPlatformVersion(), entity.getArchitecture(), entity.getModel(), entity.isMobile()
+                entity.getFullVersion(), entity.getPlatform(), entity.getPlatformVersion(), entity.getArchitecture(), entity.getModel(), entity.isMobile(), entity.isForMasking()
         );
     }
 
